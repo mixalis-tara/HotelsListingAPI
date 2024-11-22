@@ -1,0 +1,23 @@
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.Metrics;
+
+namespace HotelsListingAPI.Data
+{
+    public class Hotel
+    {
+        public int HotelId { get; set; }
+
+        public string Name { get; set; }
+
+        public string Address { get; set; }
+
+        public double Rating { get; set; }
+
+
+        // better to use nameof for error handle and not a string
+        [ForeignKey(nameof(CountryId))]
+        public int CountryId { get; set; }
+
+        public Country Country { get; set; }
+    }
+}
