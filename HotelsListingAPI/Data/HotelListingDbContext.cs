@@ -1,9 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using HotelsListingAPI.Data.Configurations;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using System.Diagnostics.Metrics;
 
 namespace HotelsListingAPI.Data
 {
-    public class HotelListingDbContext : DbContext
+    public class HotelListingDbContext : IdentityDbContext<ApiUser>
     {
         public HotelListingDbContext(DbContextOptions options) : base(options)
         {
@@ -13,56 +16,20 @@ namespace HotelsListingAPI.Data
         public DbSet<Hotel> Hotels { get; set; }
         public DbSet<Country> Countries { get; set; }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            // Suppress the 'PendingModelChangesWarning' warning
+            optionsBuilder.ConfigureWarnings(warnings => warnings.Ignore(RelationalEventId.PendingModelChangesWarning));
+            base.OnConfiguring(optionsBuilder); // Make sure base configuration is also applied
+        }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<Country>().HasData(
-                new Country
-                {
-                    CountryId = 1,
-                    Name = "Jamaica",
-                    ShortName = "JM"
-                },
-                new Country
-                {
-                    CountryId = 2,
-                    Name = "Bahamas",
-                    ShortName = "BS"
-                },
-                new Country
-                {
-                    CountryId = 3,
-                    Name = "Cayman Island",
-                    ShortName = "CI"
-                }
-            );
+            modelBuilder.ApplyConfiguration(new RoleConfiguration());
 
-            modelBuilder.Entity<Hotel>().HasData(
-                new Hotel
-                {
-                    HotelId = 1,
-                    Name = "Sandals Resort and Spa",
-                    Address = "Negril",
-                    CountryId = 1,
-                    Rating = 4.5
-                },
-                new Hotel
-                {
-                    HotelId = 2,
-                    Name = "Comfort Suites",
-                    Address = "George Town",
-                    CountryId = 3,
-                    Rating = 4.3
-                },
-                new Hotel
-                {
-                    HotelId = 3,
-                    Name = "Grand Palldium",
-                    Address = "Nassua",
-                    CountryId = 2,
-                    Rating = 4
-                }
-                );
+            modelBuilder.ApplyConfiguration(new CountryConfiguration());
+
+            modelBuilder.ApplyConfiguration(new HotelConfiguration());
         }
     
     }
