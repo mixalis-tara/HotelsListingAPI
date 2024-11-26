@@ -6,11 +6,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HotelsListingAPI.Data;
-using HotelsListingAPI.Contracts;
+using HotelsListingAPI.Core.Contracts;
 using AutoMapper;
-using HotelsListingAPI.Models.Hotel;
-using HotelsListingAPI.Models.Country;
+using HotelsListingAPI.Core.Models.Hotel;
+using HotelsListingAPI.Core.Models.Country;
 using System.Diagnostics.Metrics;
+using HotelsListingAPI.Core.Models;
+using HotelsListingAPI.Core.Repository;
 
 namespace HotelsListingAPI.Controllers
 {
@@ -27,12 +29,22 @@ namespace HotelsListingAPI.Controllers
             _mapper = mapper;
         }
 
-        // GET: api/Hotels
-        [HttpGet]
+        // GET: api/Hotels/GetAll
+        [HttpGet("GetAll")]
         public async Task<ActionResult<IEnumerable<HotelDto>>> GetHotels()
         {
             var hotels = await _hotelsRepository.GetAllAsync();
             return Ok(_mapper.Map<List<HotelDto>>(hotels));
+        }
+        // new version to get with Paged result.
+        // GET: api/Hotels/?StartIndex=0&pagesize=25&PageNumber=1
+        [HttpGet]
+        public async Task<ActionResult<PagedResult<HotelDto>>> GetPagedCountries([FromQuery] QueryParameters
+            queryParameters)
+        {
+            var pagedHotelResult = await _hotelsRepository.GetAllAsync<HotelDto>(queryParameters);
+
+            return Ok(pagedHotelResult);
         }
 
         // GET: api/Hotels/5
