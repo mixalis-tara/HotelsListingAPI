@@ -97,7 +97,7 @@ namespace HotelsListingAPI.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         [Authorize]
-        public async Task<ActionResult<GetCountryDetailsDto>> PostCountry(CreateCountryDto createCountry)
+        public async Task<ActionResult<GetCountryDto>> PostCountry(CreateCountryDto createCountry)
         {
             
             var country = await _countriesRepository.AddAsync<CreateCountryDto, GetCountryDto>(createCountry);

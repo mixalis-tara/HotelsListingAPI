@@ -27,7 +27,13 @@ namespace HotelsListingAPI
         {
             var builder = WebApplication.CreateBuilder(args);
 
+
+
             // Add services to the container.
+
+            builder.WebHost.UseIISIntegration();
+
+
             var connectionString = builder.Configuration.GetConnectionString("HotelListingDbConnectionString");
             builder.Services.AddDbContext<HotelListingDbContext>(options =>
             {
@@ -158,6 +164,9 @@ namespace HotelsListingAPI
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+            app.UseSwagger();
+            app.UseSwaggerUI();
+
 
             app.MapHealthChecks("/healthcheck", new HealthCheckOptions
             {
